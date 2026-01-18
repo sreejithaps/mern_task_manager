@@ -1,4 +1,5 @@
 import React, { use } from 'react'
+import { loginUser } from '../api'
 
 function Home() {
   const [email, setEmail] = React.useState('')
@@ -7,8 +8,19 @@ function Home() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
-  }
+    // Handle form submission logic here
+    console.log('Email:', email)
+    console.log('Password:', password) 
+    // You can add authentication logic here
+    const credentials = { email, password };
+    loginUser(credentials)
+      .then((data) => {
+        console.log("Login successful:", data.token);
+        const token = data.token; 
+        localStorage.setItem('userToken', token);
+        window.location.href = '/taskitems';
+      });
+  };
 
 
   return (

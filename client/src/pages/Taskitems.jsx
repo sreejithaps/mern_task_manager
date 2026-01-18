@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchTasks,updateTaskStatus } from '../api';
+import { fetchTasks,updateTaskStatus,fetchTaskById,deleteTask} from '../api';
 
 const TaskItems = () => {
 
@@ -21,15 +21,21 @@ const TaskItems = () => {
     const [newTitle, setNewTitle] = useState('');
     const [newStatus, setNewStatus] = useState('');
 
-    const handleEdit = (task) => {
-        setEditTask(task._id);
-        setNewTitle(task.title);
-        setNewStatus(task.status);
+    const handleEdit = (id) => {
+        const task = fetchTaskById(id, token).then((data) => {
+            setEditTask(id);
+            setNewTitle(data.title);
+            setNewStatus(data.status);
+        }   );
        
     };
 
     const handleDelete = (id) => {
         setTasks(tasks.filter(task => task._id !== id));
+        // Call delete API here if needed
+         deleteTask(id, token).then((data) => {
+            console.log(data);
+        });
     };
 
     const handleUpdate = (id) => {
@@ -71,7 +77,7 @@ const TaskItems = () => {
                                     readOnly
                                     className="border p-1 rounded ml-2"
                                 />
-                                {task.status}
+                               
                                 <select
                                     value={newStatus}
                                     className="border p-1 rounded ml-2"

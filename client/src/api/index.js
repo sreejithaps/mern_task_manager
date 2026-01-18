@@ -28,6 +28,7 @@ export async function fetchTasks(token) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
         },
+      
     });
     return response.json();
 }
@@ -59,9 +60,10 @@ export async function deleteTask(taskId, token) {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-        },
+        },       
+        
     });
-    return response.json();
+    return response.data;
 }
 export async function updateTaskStatus(taskId, statusData, token) {
     const response = await fetch(`${BASE_URL}tasks/${taskId}/status`, {
@@ -71,6 +73,16 @@ export async function updateTaskStatus(taskId, statusData, token) {
             Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(statusData),
+    });
+    return response.json();
+}
+export async function fetchTaskById(taskId, token) {
+    const response = await fetch(`${BASE_URL}tasks/${taskId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
     });
     return response.json();
 }

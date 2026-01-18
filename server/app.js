@@ -101,7 +101,7 @@ app.delete('/tasks/:id', async (req, res) => {
     try{
         const taskId = req.params.id;
         await Task.findByIdAndDelete(taskId);
-        res.send('Task deleted successfully');
+        res.status(200).send('Task deleted successfully');
     }catch(err){
         res.status(500).send('Error deleting task');
     }
@@ -110,7 +110,7 @@ app.delete('/tasks/:id', async (req, res) => {
 app.get('/tasks/:id', async (req, res) => {
     try{
         const taskId = req.params.id;   
-        const task = await Task.findById(taskId).populate('assignedTo', 'name email');
+        const task = await Task.findById(taskId);
         res.json(task);
     }catch(err){
         res.status(500).send('Error fetching task details');
