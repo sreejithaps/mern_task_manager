@@ -13,34 +13,21 @@ const jwtSecret = process.env.JWT_SECRET || 'my_jwt_secret_key';
 // Middleware
 app.use(cors());
 app.use(express.json());
+
 // Connect to MongoDB
-mongoose.connect(mongoURL)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Could not connect to MongoDB...', err));
+ const connectDB = require('./app/config/database');
+ connectDB();
 
-//schema and model definitions would go here
-const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String,
-    role: { type: String, enum: ['user', 'admin'], default: 'user' }    
-});
-const User = mongoose.model('User', userSchema);
+ 
 
-const taskSchema = new mongoose.Schema({
-    title: String,
-    description: String,
-    status: { type: String, enum: ['pending', 'in-progress', 'completed'], default: 'pending' }
-});
-const Task = mongoose.model('Task', taskSchema);    
-
-// assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+// routes
+app.use('/', require('./app/routes/routes'));
 
 // Define routes here
 app.get('/', (req, res) => {    
     res.send('Task Manager API');
 });
-app.post('/register', async (req, res) => {
+/* app.post('/register', async (req, res) => {
     try{
         const { name, email, password, role } = req.body;
         const user = new User({ name, email, password, role });
@@ -64,7 +51,7 @@ app.post('/login', async (req, res) => {
     }catch(err){
         res.status(500).send('Error logging in');
     }
-});
+}); 
 
 app.post('/tasks', async (req, res) => {
     try{
@@ -117,6 +104,18 @@ app.get('/tasks/:id', async (req, res) => {
     }
 });
 
+app.patch('/tasks/:id/status', async (req, res) => {
+    try{
+        const taskId = req.params.id;
+        const { status } = req.body;
+        const task = await Task.findByIdAndUpdate(taskId, { status }, { new: true });
+        res.json(task);
+    }catch(err){
+        res.status(500).send('Error updating task status');
+    }
+});*/
+
+
 app.get('/protected', (req, res) => {
     const token = req.headers['authorization']; 
     if(!token){
@@ -127,16 +126,6 @@ app.get('/protected', (req, res) => {
         res.send(`Hello User ${decoded.id}, you have accessed a protected route!`);
     }catch(err){
         res.status(400).send('Invalid token.');
-    }
-});
-app.patch('/tasks/:id/status', async (req, res) => {
-    try{
-        const taskId = req.params.id;
-        const { status } = req.body;
-        const task = await Task.findByIdAndUpdate(taskId, { status }, { new: true });
-        res.json(task);
-    }catch(err){
-        res.status(500).send('Error updating task status');
     }
 });
 
